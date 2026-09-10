@@ -1,4 +1,4 @@
-# Using GTA 3D AI with an AI agent
+# Using GTA Scout with an AI agent
 
 This is an early-alpha discovery tool. Read README.md, docs/catalog-schema.md and docs/blender-cli.md before operating it. Keep the agent's existing Blender CLI construction workflow; use this tool to find and inspect reusable assets.
 

@@ -1,22 +1,38 @@
-# GTA 3D AI
+# GTA Scout
 
 **[Join the Discord community →](https://discord.gg/mgFRd2AzF8)**
 
-**Find GTA assets. Build with AI and Blender.**
+**Create GTA-style 3D models and scenes with your AI.**
 
-**Early alpha — work in progress.** Local, evidence-backed asset discovery for GTA modding with humans and AI agents. Search filenames and metadata, inspect visual packets, describe what you actually see, then retrieve those descriptions with optional multilingual text embeddings.
+Describe what you want to make: a street-food stand, a new shop interior, a custom car, or an entire street market. Give your AI access to GTA Scout and Blender so it can build with the game's own visual style.
 
-This is not a bundled GTA dataset, an image-recognition service, or a one-click scene generator. You supply your own local game files and an agent/human capable of inspecting images. Blender CLI stays the rendering and building workflow.
+GTA Scout helps your AI find and inspect models and textures from your GTA files. Your agent then uses Blender to combine them, modify existing models, and create new geometry — turning your idea into an editable 3D creation you can preview and refine through conversation.
 
-## What this enables
+**Early alpha.** Works with an AI coding agent, Blender, and your own classic PC San Andreas files.
 
-Ask an agent for a café, a sheriff office, a street market, or suitable props without relying only on obscure filenames. The useful loop is:
+## Get started with your AI
 
-**Local assets → metadata index → rendered views → real visual descriptions → lexical / semantic shortlist → visual verification → Blender construction.**
+**Give your AI this repo and tell it what you want to do.** It can check your setup, install the tools it needs, and walk you through anything that needs your help.
 
-The pictures below are examples from our wider AI-assisted Blender CLI workflow, using native assets and custom geometry. They show the kind of work asset discovery supports. **This repository does not include their scene generators or downloadable game assets, and search alone did not create these scenes.**
+**Before you start:** this is a free tool for an AI coding agent. Your agent must be able to read and write files and run commands on your computer, including Blender. A chat that only gives you instructions cannot complete the workflow for you. Your AI provider may charge separately.
 
-**[Quick start](#install-and-try-it-without-gta) · [Agent guide](AGENTS.md) · [Blender CLI guide](docs/blender-cli.md)**
+Copy this into your agent:
+
+> Help me set up https://github.com/Dryxio/gta-scout. Read the README and agent guide, check what's already installed on my computer, and help me install what's missing, including the Blender tools for this task. Ask me where my GTA San Andreas files are if you need them. Then create a small street-food stand in the GTA San Andreas style. Find suitable game textures and props, model the stand in Blender, and save an editable .blend file with a rendered preview. Show me the result so we can refine it.
+
+You'll need your own classic PC San Andreas files for game assets. Just trying the tool? Ask your agent to run the included demo first; it needs neither GTA nor Blender.
+
+## What you can create
+
+- **New props and buildings:** model a kiosk, a storefront, or a small building using textures that fit the game.
+- **Custom vehicles:** turn an existing car into a police variant, a convertible, or a different build.
+- **Interiors and scenes:** furnish a shop, extend a room, or assemble a street market from game assets and new geometry.
+
+**Describe your idea → find the right assets with GTA Scout → build in Blender with your AI → preview and refine.**
+
+The showcase below comes from this wider AI-assisted Blender workflow. GTA Scout supplies asset discovery and inspection; your agent supplies the modeling scripts and uses Blender to create the result. The specific showcase generators and game assets are not included in this repository.
+
+**[Get started with your AI](#get-started-with-your-ai) · [Manual setup](#manual-setup) · [Agent guide](AGENTS.md) · [Blender CLI guide](docs/blender-cli.md)**
 
 ## Showcase
 
@@ -136,17 +152,24 @@ A selection from the additional LSPD vehicle conversions. **Blender renders**.
 | ![Papercuts street kiosk, rendered in Blender](docs/images/street-kiosk.png) | ![Open 24/7 convenience store, rendered in Blender](docs/images/247-store.png) |
 | Coffee shop | LSSD interior |
 | ![The Daily Grind café, rendered in Blender](docs/images/coffee-shop.png) | ![Sheriff reception, rendered in Blender](docs/images/lssd.png) |
-Traffic-node authoring is available in the companion project [GTA SA Traffic](https://github.com/Dryxio/gta-sa-traffic), with its own Blender and map screenshots.
+Traffic-node authoring is available in the companion project [GTA Flow](https://github.com/Dryxio/gta-flow), with its own Blender and map screenshots.
 
-The public project is named **GTA 3D AI**. For compatibility, the Python distribution remains `gta-asset-search` and existing `asset-catalog*` commands are unchanged.
+The public project is named **GTA Scout**. For compatibility, the Python distribution remains `gta-asset-search` and existing `asset-catalog*` commands are unchanged.
+
+## Manual setup
+
+Prefer to install it yourself? Expand the instructions below.
+
+<details>
+<summary>Manual installation, configuration and examples</summary>
 
 ## Install and try it without GTA
 
 Python **3.12 recommended**, Python 3.10+ supported by the core. SQLite must include FTS5. No server, SSH access, paid API key, or Blender installation is needed for this toy demo.
 
 ```sh
-git clone https://github.com/Dryxio/gta-3d-ai.git
-cd gta-3d-ai
+git clone https://github.com/Dryxio/gta-scout.git
+cd gta-scout
 python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e .
@@ -191,6 +214,8 @@ Already have a catalogue? Supply the [documented JSON layout](docs/catalog-schem
 
 **A fresh installation starts without our local annotations.** Render a bounded batch and have an agent/human review it before expecting useful visual semantic retrieval. See the [agent guide](AGENTS.md) and [Blender CLI workflow](docs/blender-cli.md).
 
+</details>
+
 ## What works in this alpha
 
 - Incremental SQLite/FTS5 import, bilingual lexical hints, game/kind/dimension filters, provenance and explicit partial matches.
@@ -206,7 +231,7 @@ Already have a catalogue? Supply the [documented JSON layout](docs/catalog-schem
 
 Our earlier local campaign indexed 50,017 entries (16,838 models including extra mod entries, and 33,179 texture occurrences). Its first enrichment checkpoint passed with 1,730 usable direct visual descriptions at that historical snapshot. **Those data and annotations are not distributed, those counts are not a standard vanilla-game inventory, and that checkpoint does not establish exhaustive recall.**
 
-The public [issues](https://github.com/Dryxio/gta-3d-ai/issues) track:
+The public [issues](https://github.com/Dryxio/gta-scout/issues) track:
 
 - Independent relevance / missed-candidate evaluation (CP1).
 - End-to-end scale, interruption recovery, freshness, throughput and storage validation (CP3).

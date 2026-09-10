@@ -18,4 +18,4 @@ does not close CP1 or substitute for independent final-answer evaluation.
 The [continuation](reports/cp1-2026-09-08-continuation.md) reaches 20/22 on the
 development regression; it must not be relabeled as held-out acceptance.
 
-Public tracking: [CP1 #1](https://github.com/Dryxio/gta-3d-ai/issues/1), [CP3 #2](https://github.com/Dryxio/gta-3d-ai/issues/2), [CP4 #3](https://github.com/Dryxio/gta-3d-ai/issues/3), [CP5 #4](https://github.com/Dryxio/gta-3d-ai/issues/4), [future CP6 #5](https://github.com/Dryxio/gta-3d-ai/issues/5).
+Public tracking: [CP1 #1](https://github.com/Dryxio/gta-scout/issues/1), [CP3 #2](https://github.com/Dryxio/gta-scout/issues/2), [CP4 #3](https://github.com/Dryxio/gta-scout/issues/3), [CP5 #4](https://github.com/Dryxio/gta-scout/issues/4), [future CP6 #5](https://github.com/Dryxio/gta-scout/issues/5).
