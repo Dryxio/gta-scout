@@ -57,6 +57,21 @@ class RetrievalTests(unittest.TestCase):
         self.assertEqual(sem.build(self.db,self.e)['eligible'],0)
         self.assertEqual(sem.build(self.db,self.e,'metadata')['embedded'],3)
         self.assertEqual(sem.search(self.db,self.e,'chair')['results'],[])
+
+    def test_metadata_coverage_does_not_claim_visual_annotation(self):
+        self.db.execute("DELETE FROM annotations WHERE key='sa:model:2'")
+        sem.build(self.db,self.e,'metadata')
+        result=sem.search(self.db,self.e,'chair',corpus='metadata',game='sa')
+        coverage=result['coverage']
+        self.assertEqual(coverage['freshEmbeddedDocuments'],2)
+        self.assertEqual(coverage['freshVisuallyAnnotatedDocuments'],1)
+        self.assertEqual(coverage['freshMetadataOnlyDocuments'],1)
+        # Changing actual evidence invalidates the visual coverage, even when
+        # metadata remains eligible and the previous vectors are still stored.
+        self.db.execute("UPDATE annotations SET confidence=.1 WHERE key='sa:model:1'")
+        result=sem.search(self.db,self.e,'chair',corpus='metadata',game='sa')
+        self.assertEqual(result['coverage']['freshVisuallyAnnotatedDocuments'],0)
+        self.assertEqual(result['coverage']['freshMetadataOnlyDocuments'],1)
     def test_reject_invalid_vectors(self):
         self.e.encode=lambda texts: np.full((len(texts),2),np.nan)
         with self.assertRaises(ValueError):sem.build(self.db,self.e)

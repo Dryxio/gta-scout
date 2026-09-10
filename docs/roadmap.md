@@ -15,5 +15,7 @@ CP1 now has a [reproducible evaluator](evaluation.md) and a
 [real failing baseline](reports/cp1-2026-09-08.md): semantic recall@30 is 5/22,
 with 16 misses lacking fresh descriptions and one covered ranking miss. This
 does not close CP1 or substitute for independent final-answer evaluation.
+The [continuation](reports/cp1-2026-09-08-continuation.md) reaches 20/22 on the
+development regression; it must not be relabeled as held-out acceptance.
 
 Public tracking: [CP1 #1](https://github.com/Dryxio/gta-3d-ai/issues/1), [CP3 #2](https://github.com/Dryxio/gta-3d-ai/issues/2), [CP4 #3](https://github.com/Dryxio/gta-3d-ai/issues/3), [CP5 #4](https://github.com/Dryxio/gta-3d-ai/issues/4), [future CP6 #5](https://github.com/Dryxio/gta-3d-ai/issues/5).

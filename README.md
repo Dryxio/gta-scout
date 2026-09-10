@@ -219,6 +219,8 @@ See [roadmap criteria](docs/roadmap.md), [validation](docs/validation.md), and [
 The [CP1 evaluation CLI and independent-review protocol](docs/evaluation.md) now
 capture reproducible local benchmarks. The [2026-09-08 real rerun](docs/reports/cp1-2026-09-08.md)
 finds 5 of 22 independently known candidates in the semantic top 30; CP1 remains open.
+The [continuation](docs/reports/cp1-2026-09-08-continuation.md) reaches 20/22 after
+development enrichment; a new independent confirmation and final-answer audit remain required.
 
 ## Tests
 

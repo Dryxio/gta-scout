@@ -152,7 +152,8 @@ def ratio(numerator, denominator):
     return numerator / denominator if denominator else None
 
 
-def capture(frozen, source, out, mode='semantic', encoder_factory=None):
+def capture(frozen, source, out, mode='semantic', encoder_factory=None, corpus='annotations',
+            evaluation_role='diagnostic'):
     """Run the public search implementation on a consistent isolated backup.
 
     No benchmark labels enter the encoder, annotations, vectors or ranking.
@@ -161,6 +162,10 @@ def capture(frozen, source, out, mode='semantic', encoder_factory=None):
     queries = validate_frozen(frozen)
     if mode not in ('semantic', 'hybrid', 'lexical'):
         raise ValueError('Unknown retrieval mode')
+    if corpus not in ('annotations', 'metadata'):
+        raise ValueError('Unknown semantic corpus')
+    if evaluation_role not in ('diagnostic', 'development', 'heldout'):
+        raise ValueError('Unknown evaluation role')
     source = Path(source).resolve()
     if not source.is_file():
         raise ValueError('Existing source database required')
@@ -186,8 +191,9 @@ def capture(frozen, source, out, mode='semantic', encoder_factory=None):
         load_seconds = time.monotonic() - start
         run = {'benchmark_sha256': frozen['benchmark_sha256'],
                'snapshot_sha256': snapshot_hash,
-               'system': (encoder.identity if encoder else 'SQLite FTS5') + ':' + mode,
-               'mode': mode, 'platform': platform.platform(),
+               'system': (encoder.identity if encoder else 'SQLite FTS5') + ':' + mode + ':' + corpus,
+               'mode': mode, 'corpus': corpus if encoder else None,
+               'evaluation_role': evaluation_role, 'platform': platform.platform(),
                'encoder_load_seconds': load_seconds, 'results': []}
         for q in queries.values():
             start = time.monotonic()
@@ -196,7 +202,7 @@ def capture(frozen, source, out, mode='semantic', encoder_factory=None):
                 coverage = None
             else:
                 result = semantic.search(db, encoder, q['query'], limit=30,
-                    game=q['game'], kind=q['kind'], hybrid=mode == 'hybrid',
+                    game=q['game'], kind=q['kind'], corpus=corpus, hybrid=mode == 'hybrid',
                     diversify_pixels=True)
                 hits, coverage = result['results'], result['coverage']
             run['results'].append({'query_id': q['id'], 'keys': [r['key'] for r in hits],
@@ -321,6 +327,7 @@ def evaluate(frozen, run, decisions=None, audit=None):
     controls = sum(j['status'] == 'irrelevant' or
                    any(c['verdict'] == 'fail' for c in j['constraint_checks']) for j in judgments)
     gates = {
+        'heldout_run_explicitly_declared': run.get('evaluation_role') == 'heldout',
         'at_least_24_requests': len(queries) >= 24,
         'at_least_100_independent_judgments': len(judgments) >= 100,
         'negative_controls_present': controls > 0,
@@ -339,6 +346,7 @@ def evaluate(frozen, run, decisions=None, audit=None):
     }
     return {
         'version': VERSION, 'benchmark_sha256': identity, 'run_sha256': digest(run),
+        'evaluation_role': run.get('evaluation_role', 'unspecified'),
         'passed': all(gates.values()), 'gates': gates,
         'requests': len(queries), 'independent_judgments': len(judgments),
         'known_direct_candidates': len(positives), 'known_positive_requests': len(positive_queries),
@@ -368,6 +376,10 @@ def main():
     p.add_argument('--benchmark', required=True)
     p.add_argument('--db', required=True)
     p.add_argument('--mode', choices=['semantic', 'hybrid', 'lexical'], default='semantic')
+    p.add_argument('--corpus', choices=['annotations', 'metadata'], default='annotations',
+                   help='Explicit separate semantic corpus; metadata hits are not visual evidence')
+    p.add_argument('--role', choices=['diagnostic', 'development', 'heldout'], default='diagnostic',
+                   help='Only a separately declared held-out run may pass CP1; never relabel tuned cases')
     p.add_argument('--out', required=True, help='New local directory; existing runs are never overwritten')
     p = commands.add_parser('score', help='Score rankings and independent final decisions')
     p.add_argument('--benchmark', required=True)
@@ -379,7 +391,8 @@ def main():
     if args.command == 'freeze':
         result = freeze(read(args.suite))
     elif args.command == 'run':
-        result = capture(read(args.benchmark), args.db, args.out, args.mode)
+        result = capture(read(args.benchmark), args.db, args.out, args.mode, corpus=args.corpus,
+                         evaluation_role=args.role)
         print(json.dumps({'output': str(Path(args.out).resolve() / 'run.json'),
                           'queries': len(result['results']),
                           'query_seconds': result['query_seconds']}, indent=2))

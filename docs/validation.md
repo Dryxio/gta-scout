@@ -1,5 +1,10 @@
 # Alpha validation
 
+The [CP1 continuation](reports/cp1-2026-09-08-continuation.md) passes **197 Python
+tests with the real encoder and 2 Node tests**. Real development recall reaches
+20/22 after actual image review and source-verified transfers. This is a tuned
+development result, not a new independent acceptance result.
+
 CP1 evaluation work validated on 2026-09-08: **194 Python tests passed**, including
 the opt-in real pinned encoder test, plus **2 Node tests passed**. The 27 new
 evaluator tests use original synthetic images. A non-editable package installation

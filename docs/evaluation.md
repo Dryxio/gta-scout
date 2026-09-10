@@ -75,7 +75,7 @@ or matching text. Overlapping judgment keys are rejected.
 asset-catalog-evaluate freeze --suite output/eval/suite.json \
   --out output/eval/benchmark.json
 asset-catalog-evaluate run --benchmark output/eval/benchmark.json \
-  --db output/my-sa.sqlite --mode semantic --out output/eval/run-01
+  --db output/my-sa.sqlite --mode semantic --role heldout --out output/eval/run-01
 asset-catalog-evaluate score --benchmark output/eval/benchmark.json \
   --run output/eval/run-01/run.json --out output/eval/raw-score.json
 ```
@@ -86,6 +86,21 @@ Semantic/hybrid runs need the optional semantic dependencies and pinned model;
 lexical runs need only the core. The copy's hash, encoder identity, environment,
 load time and per-query latency are saved. Absolute image references stay local;
 this is not a portable evidence export (CP3).
+
+Runs default to `--role diagnostic`, which cannot close CP1. Use `--role
+development` once the cases have informed captions or ranking. Only an explicitly
+declared `--role heldout` run can pass the checkpoint, after the independent
+protocol has actually been followed. The declaration is stored in the hashed run;
+it is not proof of independence, and old tuned runs must never be relabeled.
+
+The default remains `--corpus annotations`. To diagnose the separately supported
+metadata corpus, build it explicitly with `asset-catalog-semantic --db DATABASE
+--corpus metadata build`, then use `run --corpus metadata` and a new output
+directory. The run records the corpus in its system identity. Metadata retrieval
+is a discovery channel; it does not establish visual relevance. Search coverage
+now separates `freshVisuallyAnnotatedDocuments` (including usable exact-pixel
+transfers) from `freshMetadataOnlyDocuments`. Neither number is a count of new
+direct visual inspections.
 
 `score` writes a report and exits **2** when any acceptance gate is incomplete
 or fails. Omitting final decisions intentionally fails acceptance. Every output

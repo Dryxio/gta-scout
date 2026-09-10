@@ -29,7 +29,8 @@ class EvaluationTests(unittest.TestCase):
             'independent_of_retrieval': True, 'scope': 'Synthetic',
             'reviewer': 'fixture author', 'limitations': 'No GTA claims.'},
             'queries': [], 'judgments': []}
-        self.run = {'system': 'synthetic', 'snapshot_sha256': 'synthetic', 'results': []}
+        self.run = {'system': 'synthetic', 'snapshot_sha256': 'synthetic',
+                    'evaluation_role': 'heldout', 'results': []}
         self.decisions = {'reviewer': 'synthetic answerer',
                           'independent_of_ground_truth': True,
                           'protocol': 'Synthetic independent roles', 'results': []}
@@ -76,6 +77,16 @@ class EvaluationTests(unittest.TestCase):
         self.decisions['independent_of_ground_truth'] = False
         self.assertFalse(self.score()['passed'])
 
+    def test_tuned_development_run_cannot_close_checkpoint_even_with_perfect_metrics(self):
+        for role in ('development', 'diagnostic', None):
+            self.run['evaluation_role'] = role
+            self.decisions['run_sha256'] = ev.digest(self.run)
+            result = self.score()
+            self.assertEqual(result['known_direct_recall_at_30'], 1)
+            self.assertEqual(result['final']['precision_lower_bound'], 1)
+            self.assertFalse(result['passed'])
+            self.assertFalse(result['gates']['heldout_run_explicitly_declared'])
+
     def test_duplicate_request_text_does_not_inflate_sample_size(self):
         self.suite['queries'][1]['query'] = self.suite['queries'][0]['query']
         with self.assertRaises(ValueError):
@@ -101,6 +112,32 @@ class EvaluationTests(unittest.TestCase):
                          hashlib.sha256((out / 'snapshot.sqlite').read_bytes()).hexdigest())
         with self.assertRaises(FileExistsError):
             ev.capture(self.frozen, source, out, 'lexical')
+
+    def test_capture_keeps_semantic_corpus_explicit(self):
+        import asset_catalog as catalog
+        import asset_catalog_semantic as semantic
+        import numpy as np
+        class Encoder:
+            identity = 'synthetic-corpus-test'
+            def encode(self, texts, query=False):
+                return np.asarray([[1., 0.] for _ in texts])
+        source = Path(self.tmp.name) / 'metadata.sqlite'
+        db = catalog.connect(source)
+        payload = {'record': {'name': 'toy'}, 'hints': [], 'catalogSource': 'fixture'}
+        db.execute('INSERT INTO assets VALUES (?,?,?,?,?,?)',
+                   ('sa:model:0', 'sa', 'model', 'toy', 'h', json.dumps(payload)))
+        db.commit()
+        semantic.build(db, Encoder(), 'metadata')
+        db.close()
+        metadata = ev.capture(self.frozen, source, Path(self.tmp.name) / 'metadata-run',
+                              encoder_factory=Encoder, corpus='metadata')
+        annotations = ev.capture(self.frozen, source, Path(self.tmp.name) / 'annotation-run',
+                                 encoder_factory=Encoder)
+        self.assertEqual(metadata['corpus'], 'metadata')
+        self.assertEqual(metadata['results'][0]['keys'], ['sa:model:0'])
+        self.assertEqual(metadata['results'][0]['coverage']['freshMetadataOnlyDocuments'], 1)
+        self.assertEqual(annotations['results'][0]['keys'], [])
+        self.assertNotEqual(metadata['system'], annotations['system'])
 
     def test_all_abstentions_do_not_pass_precision_or_answer_rate(self):
         for row in self.decisions['results']:

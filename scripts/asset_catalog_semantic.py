@@ -121,7 +121,8 @@ def search(db,encoder,query,limit=20,corpus='annotations',game=None,kind=None,hy
     for column,value in [('game',game),('kind',kind)]:
         if value:sql+=f' AND {column}=?';params.append(value)
     total=db.execute(sql,params).fetchone()[0]
-    return {'query':query,'model':encoder.identity,'corpus':corpus,'mode':'hybrid-rrf' if hybrid else 'semantic','diversified_texture_pixels':diversify_pixels,'coverage':{'assetsInScope':total,'eligibleDocuments':len(docs),'freshEmbeddedDocuments':len(rows),'eligibleMissingVectors':len(docs)-len(rows),'assetsWithoutSemanticCoverage':total-len(rows)},'scoreMeaning':'Cosine similarity, not probability. RRF is rank fusion, not confidence.','results':result}
+    visually_annotated=sum(bool(r['visuallyAnnotated']) for r in rows)
+    return {'query':query,'model':encoder.identity,'corpus':corpus,'mode':'hybrid-rrf' if hybrid else 'semantic','diversified_texture_pixels':diversify_pixels,'coverage':{'assetsInScope':total,'eligibleDocuments':len(docs),'freshEmbeddedDocuments':len(rows),'freshVisuallyAnnotatedDocuments':visually_annotated,'freshMetadataOnlyDocuments':len(rows)-visually_annotated,'eligibleMissingVectors':len(docs)-len(rows),'assetsWithoutSemanticCoverage':total-len(rows)},'scoreMeaning':'Cosine similarity, not probability. RRF is rank fusion, not confidence.','results':result}
 
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--db',required=True);p.add_argument('--device',default='cpu');p.add_argument('--corpus',choices=['annotations','metadata'],default='annotations')
