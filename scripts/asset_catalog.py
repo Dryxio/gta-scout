@@ -88,6 +88,9 @@ def annotation_is_fresh(db,annotation,cache=None):
     """Recheck image bytes per operation; transfers also depend on their live parent."""
     if not annotation:return False
     cache={} if cache is None else cache
+    if annotation['method']=='shared-visual':
+        from asset_catalog_pack import is_fresh
+        return is_fresh(annotation,cache)
     if annotation['method'] in ('model-visual','human-visual'):
         try:
             evidence=json.loads(annotation['evidence'])

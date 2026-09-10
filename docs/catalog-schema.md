@@ -47,3 +47,10 @@ and an overrides mapping:
 One to eight local images per selected key are supported. Every image is validated and hashed. If no override is available, the operation reports failure by default. An optional `ASSET_PREVIEW_BASE_URL` points to a user-controlled HTTP(S) preview service with `thumbnails/ID.png` for SA models and sanitized `textures/TXD__NAME.png` for SA textures; VC/III use game-prefixed directories. Same-URL texture identity collisions require explicit local overrides. This optional legacy URL scheme is not a pixel-resolution guarantee.
 
 Annotation/review schema is emitted in each `packet.json`; use that exact version. No automatic external vision worker is included.
+
+## Shared descriptions
+
+`asset-catalog-pack` imports the versioned [public text pack](shared-annotations.md)
+by checking local source bytes and rebinding to local asset hashes. Imported
+`shared-visual` evidence tracks publisher review hashes and local source locators;
+it does not require the publisher's private image paths or pretend a local review occurred.

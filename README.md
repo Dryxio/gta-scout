@@ -212,7 +212,16 @@ The adapter reads active IDE declarations in `data/gta.dat`, `data/default.ide`,
 
 Already have a catalogue? Supply the [documented JSON layout](docs/catalog-schema.md) with `build --root`. Namespaces support `sa`, `vc`, and `gta3`; full VC/III source adapters and validation are future work.
 
-**A fresh installation starts without our local annotations.** Render a bounded batch and have an agent/human review it before expecting useful visual semantic retrieval. See the [agent guide](AGENTS.md) and [Blender CLI workflow](docs/blender-cli.md).
+**Start with our shared descriptions:** the repo now includes **6,486 reviewed descriptions**, with **4,803 source-bound entries** eligible for automatic matching to your installation. Import them before rendering new batches:
+
+```sh
+asset-catalog-pack --db output/my-sa.sqlite import \
+  --pack data/annotations/sa-2026-09-11.json \
+  --game-root '/path/to/GTA San Andreas' --apply
+asset-catalog-semantic --db output/my-sa.sqlite build
+```
+
+Install `.[semantic]` for embeddings. Matching descriptions are reused without new renders or vision calls. Existing local reviews are preserved; modified or missing source files are excluded. The remaining 1,683 descriptions are public reference material requiring local verification. See [shared pack details and coverage](docs/shared-annotations.md). For uncovered assets, use the [agent guide](AGENTS.md) and [Blender CLI workflow](docs/blender-cli.md).
 
 </details>
 
@@ -229,7 +238,7 @@ Already have a catalogue? Supply the [documented JSON layout](docs/catalog-schem
 
 **Coverage is incomplete.** Existing unit tests do not prove that every relevant object is found. Missing models, transparent/ambiguous atlases, source variants, skinned geometry, and unreviewed appearances remain real gaps. Static rendering rejects skinned DFFs instead of inventing a successful preview. Metadata and source changes still need deliberate rebuild/review; this is not a filesystem watcher.
 
-Our earlier local campaign indexed 50,017 entries (16,838 models including extra mod entries, and 33,179 texture occurrences). Its first enrichment checkpoint passed with 1,730 usable direct visual descriptions at that historical snapshot. **Those data and annotations are not distributed, those counts are not a standard vanilla-game inventory, and that checkpoint does not establish exhaustive recall.**
+Our earlier local campaign indexed 50,017 entries (16,838 models including extra mod entries, and 33,179 texture occurrences). Its first enrichment checkpoint passed with 1,730 usable direct visual descriptions at that historical snapshot. **The private database and game assets are not distributed. A newer sanitized text-only annotation pack is now included; these counts are not a standard vanilla-game inventory, and that checkpoint does not establish exhaustive recall.**
 
 The public [issues](https://github.com/Dryxio/gta-scout/issues) track:
 
@@ -262,4 +271,4 @@ Default tests generate synthetic fixtures in temporary directories and need no g
 
 ## License and data
 
-Original tool code: [MIT](LICENSE). [Third-party notices](THIRD_PARTY_NOTICES.md) cover separately installed dependencies, including GPL-licensed DragonFF. No DragonFF code, game binaries, texture packs, private catalog database, or reviewed GTA annotation dataset is bundled. Demo screenshots illustrate modding work and retain the rights of their underlying game content; they are not an asset redistribution license. Not affiliated with Rockstar Games or Take-Two Interactive.
+Original tool code: [MIT](LICENSE). [Third-party notices](THIRD_PARTY_NOTICES.md) cover separately installed dependencies, including GPL-licensed DragonFF. The shared text annotations in `data/annotations/` are also provided under MIT. No DragonFF code, game binaries, texture packs, private catalog database, or review images are bundled. Demo screenshots illustrate modding work and retain the rights of their underlying game content; they are not an asset redistribution license. Not affiliated with Rockstar Games or Take-Two Interactive.
