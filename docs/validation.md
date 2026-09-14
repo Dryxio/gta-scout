@@ -19,7 +19,7 @@ Initial extraction validated on 2026-09-07:
 - Node.js helper tests: **2 passed** (malformed TXD rejection). Real extraction separately checked below; two unit tests are not exhaustive decoder validation.
 - Local read-only classic PC SA adapter: **14,344 models and 32,878 texture occurrences**, no reported read failures on that installation. Includes active/default IDE scope; not equal to the historical catalogue with mod/standalone extras. No source files or resulting metadata are committed.
 - One real local static DFF chair extracted with textures and rendered in four views under **Blender 5.2.1 LTS**, with a separately obtained public DragonFF checkout. Outputs stayed local and ignored. One model does not validate every source format or skinned asset.
-- Synthetic quick start, visual local override packet and actual semantic build/search executed. The default preview service is unconfigured; no private CDN is needed.
+- Synthetic quick start, visual local override packet and actual semantic build/search executed. SA visual packets use the public GTA Stuff preview service by default; `ASSET_PREVIEW_BASE_URL` and local overrides remain available for other sources.
 
 The repository CI runs game-free tests on Python 3.10 and 3.12, plus Node helper tests. Gameplay behavior, full-catalogue visual coverage, hardware-wide timing/storage and final independent relevance targets remain unvalidated. See the public checkpoint issues.
 

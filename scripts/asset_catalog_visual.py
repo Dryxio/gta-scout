@@ -6,6 +6,7 @@ from pathlib import Path
 import asset_catalog as catalog
 VERSION = 'visual-packet-v1'
 MAX_BYTES = 16 * 1024 * 1024
+DEFAULT_PREVIEW_BASE_URL = 'https://gtastuff.namecdsl.xyz'
 
 def sha(data): return hashlib.sha256(data).hexdigest()
 def read_json(path): return json.loads(Path(path).read_text())
@@ -32,12 +33,14 @@ def preview_source(row):
     else:
         clean=lambda x: re.sub(r'[^a-zA-Z0-9_-]','_',x).lower()
         name=f"textures/{clean(r['txd'])}__{clean(r['name'])}.png"
-    base=os.environ.get('ASSET_PREVIEW_BASE_URL', '').rstrip('/')
+    configured=os.environ.get('ASSET_PREVIEW_BASE_URL')
+    base=(configured if configured is not None else
+          (DEFAULT_PREVIEW_BASE_URL if row['game']=='sa' else '')).rstrip('/')
     return (base+'/' if base else 'unconfigured-preview:')+prefix+name
 
 def fetch_image(url):
     if url.startswith('unconfigured-preview:'):
-        raise ValueError('No preview source configured. Supply --overrides with local images or set ASSET_PREVIEW_BASE_URL.')
+        raise ValueError('No preview source configured. Supply --overrides with local images or set ASSET_PREVIEW_BASE_URL (SA uses the public GTA Stuff preview service by default).')
     if not url.startswith(('https://', 'http://')):
         raise ValueError('Preview base must use HTTP(S); use local overrides for files.')
     req=urllib.request.Request(url,headers={'User-Agent':'gta-asset-search/0.1'})

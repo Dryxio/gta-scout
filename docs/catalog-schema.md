@@ -44,7 +44,7 @@ and an overrides mapping:
 {"sa:model:1":["/path/to/front.png","/path/to/side.png"]}
 ```
 
-One to eight local images per selected key are supported. Every image is validated and hashed. If no override is available, the operation reports failure by default. An optional `ASSET_PREVIEW_BASE_URL` points to a user-controlled HTTP(S) preview service with `thumbnails/ID.png` for SA models and sanitized `textures/TXD__NAME.png` for SA textures; VC/III use game-prefixed directories. Same-URL texture identity collisions require explicit local overrides. This optional legacy URL scheme is not a pixel-resolution guarantee.
+One to eight local images per selected key are supported. Every image is validated and hashed. For SA, the public GTA Stuff preview service (`https://gtastuff.namecdsl.xyz`) is used by default. Set `ASSET_PREVIEW_BASE_URL` to override it, or set it to an empty value to require local overrides. VC/III have no default preview service and require `ASSET_PREVIEW_BASE_URL` or local overrides. The service uses `thumbnails/ID.png` for SA models and sanitized `textures/TXD__NAME.png` for SA textures; VC/III use game-prefixed directories. Same-URL texture identity collisions require explicit local overrides. This preview URL scheme is not a pixel-resolution guarantee.
 
 Annotation/review schema is emitted in each `packet.json`; use that exact version. No automatic external vision worker is included.
 
