@@ -212,16 +212,16 @@ The adapter reads active IDE declarations in `data/gta.dat`, `data/default.ide`,
 
 Already have a catalogue? Supply the [documented JSON layout](docs/catalog-schema.md) with `build --root`. Namespaces support `sa`, `vc`, and `gta3`; full VC/III source adapters and validation are future work.
 
-**Start with our shared descriptions:** the repo now includes **6,486 reviewed descriptions**, with **4,803 source-bound entries** eligible for automatic matching to your installation. Import them before rendering new batches:
+**Start with our shared descriptions:** the repo now includes **7,815 reviewed descriptions**, with **6,186 source-bound entries** eligible for automatic matching to your installation. Import them before rendering new batches:
 
 ```sh
 asset-catalog-pack --db output/my-sa.sqlite import \
-  --pack data/annotations/sa-2026-09-11.json \
+  --pack data/annotations/sa-2026-10-03.json \
   --game-root '/path/to/GTA San Andreas' --apply
 asset-catalog-semantic --db output/my-sa.sqlite build
 ```
 
-Install `.[semantic]` for embeddings. Matching descriptions are reused without new renders or vision calls. Existing local reviews are preserved; modified or missing source files are excluded. The remaining 1,683 descriptions are public reference material requiring local verification. See [shared pack details and coverage](docs/shared-annotations.md). For uncovered assets, use the [agent guide](AGENTS.md) and [Blender CLI workflow](docs/blender-cli.md).
+Install `.[semantic]` for embeddings. Matching descriptions are reused without new renders or vision calls. Existing local reviews are preserved; modified or missing source files are excluded. The remaining 1,629 descriptions are public reference material requiring local verification. See [shared pack details and coverage](docs/shared-annotations.md). For uncovered assets, use the [agent guide](AGENTS.md) and [Blender CLI workflow](docs/blender-cli.md).
 
 </details>
 
